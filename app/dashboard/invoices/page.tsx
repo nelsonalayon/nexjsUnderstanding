@@ -1,7 +1,45 @@
-export default function Invoices() {
+import Pagination from '@/app/ui/invoices/pagination';
+import Search from '@/app/ui/search';
+import Table from '@/app/ui/invoices/table';
+import { lusitana } from '@/app/ui/fonts';
+import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+import { Suspense } from 'react';
+import { CreateInvoice } from '@/app/ui/invoices/buttons';
+import { fetchInvoicesPages } from '@/app/lib/data';
+
+export default async function Innvoices(
+    props: {
+        searchParams?: Promise<{
+            query?: string;
+            page?: string;
+        }>
+    }
+)
+ {   
+    const searchParams = await props.searchParams;    
+    const query = searchParams?.query || '';
+    const currentPage = parseInt(searchParams?.page || '1');
+    const totalPages = await fetchInvoicesPages(query);
+       
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <h1 className="text-4xl font-bold">Welcome to the Invoices Page</h1>
-        </main>
+        <div className='w-full y-items'>
+            <div className='flex x-full justify-between'>
+                <h1 className={`${lusitana.className} text-2xl`}>Invoices</h1>
+            </div>
+            <div className='flex flex-col w-full items-center justify-between'>
+                <div  className='mt-4 flex gap-2 md:mt-8'>
+                    <Search placeholder='Search invoices...' />
+                    <CreateInvoice />
+                </div>
+
+                <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+                    <Table query={query} currentPage={currentPage} />
+                </Suspense>
+                <div className='mt-4 flex items-center justify-end'>
+                    <Pagination totalPages={totalPages} />
+                </div>
+
+            </div>
+        </div>
     )
 }

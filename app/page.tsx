@@ -18,10 +18,13 @@ export default function Page() {
           'bg-green-500 text-white': status === 'paid',
         }
       )}>
-        <AcmeLogo />
+        <AcmeLogo className="animate-blurred-fade-in"  />
         <button onClick={() => setStatus(status === 'pending' ? 'paid' : 'pending')} className='ml-auto rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100'>
           {status === 'pending' ? 'Mark as Paid' : 'Mark as Pending'}
         </button>
+         <button className='ml-auto rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100'>
+          <Link href="/dashboard">dashboard provisioning</Link>
+         </button>         
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
         <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
