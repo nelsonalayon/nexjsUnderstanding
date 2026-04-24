@@ -1,3 +1,5 @@
+'use client'
+
 import { CustomerField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
@@ -7,10 +9,24 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
+import { createInvoice, State } from '@/app/lib/actions';
+import { useActionState } from 'react';
+import error from '@/app/dashboard/invoices/error';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
+  const initialState: State = {
+    message: null,
+    errors: {},
+    values: {
+      customerId: '',
+      amount: '1555',
+      status: '',
+    },
+    submissionId: 0,
+  };
+  const [state, formAction] = useActionState(createInvoice, initialState);
   return (
-    <form>
+    <form action={formAction} key={state.submissionId}>     
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Customer Name */}
         <div className="mb-4">
@@ -22,7 +38,8 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
               id="customer"
               name="customerId"
               className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-              defaultValue=""
+              defaultValue={state.values?.customerId ?? ""}
+              aria-describedby="customer-error"
             >
               <option value="" disabled>
                 Select a customer
@@ -34,6 +51,14 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
               ))}
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <div id="customer-error" aria-live="polite" aria-atomic="true" className="mt-1 text-sm text-red-600">
+            {state.errors?.customerId &&
+              state.errors.customerId.map((error: string) => (
+                <p className="flex items-center gap-1" key={error}>
+                  <span>{error}</span>
+                </p>
+              ))}
           </div>
         </div>
 
@@ -50,10 +75,20 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 type="number"
                 step="0.01"
                 placeholder="Enter USD amount"
+                defaultValue={state.values?.amount ?? ""}
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                aria-describedby="amount-error"
               />
               <CurrencyDollarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
+          </div>
+          <div id="amount-error" aria-live="polite" aria-atomic="true" className="mt-1 text-sm text-red-600">
+            {state.errors?.amount &&
+              state.errors.amount.map((error: string) => (
+                <p className="flex items-center gap-1" key={error}>
+                  <span>{error}</span>
+                </p>
+              ))}
           </div>
         </div>
 
@@ -70,7 +105,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                   name="status"
                   type="radio"
                   value="pending"
+                  defaultChecked={state.values?.status === 'pending'}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                  aria-describedby="status-error"
                 />
                 <label
                   htmlFor="pending"
@@ -85,7 +122,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                   name="status"
                   type="radio"
                   value="paid"
+                  defaultChecked={state.values?.status === 'paid'}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                  aria-describedby="status-error"
                 />
                 <label
                   htmlFor="paid"
@@ -95,6 +134,14 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 </label>
               </div>
             </div>
+          </div>
+          <div id="status-error" aria-live="polite" aria-atomic="true" className="mt-1 text-sm text-red-600">
+            {state.errors?.status &&
+              state.errors.status.map((error: string) => (
+                <p className="flex items-center gap-1" key={error}>
+                  <span>{error}</span>
+                </p>
+              ))}
           </div>
         </fieldset>
       </div>
