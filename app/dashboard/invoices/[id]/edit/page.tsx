@@ -4,6 +4,10 @@ import { fetchInvoiceById, fetchCustomers } from "@/app/lib/data";
 import { notFound } from "next/navigation";
 
 
+export const metadata = {
+    title: "Edit Invoice | Acme Dashboard", 
+};
+
 
 export default async function EditInvoice(props: { params: Promise<{ id: string }>}) {
     const params = await props.params;

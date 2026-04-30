@@ -6,8 +6,13 @@ import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { CreateInvoice } from '@/app/ui/invoices/buttons';
 import { fetchInvoicesPages } from '@/app/lib/data';
+import { Metadata } from 'next';
 
-export default async function Innvoices(
+export const metadata: Metadata = {
+    title: "Invoices | Acme Dashboard",    
+}
+
+export default async function Invoices(
     props: {
         searchParams?: Promise<{
             query?: string;
